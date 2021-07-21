@@ -1,8 +1,11 @@
+import 'package:chat_pc/src/providers/auth_provider.dart';
+import 'package:chat_pc/src/widgets/show_alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_pc/src/widgets/button_login.dart';
 import 'package:chat_pc/src/widgets/logo_login_widget.dart';
 import 'package:chat_pc/src/widgets/labels_login_widget.dart';
 import 'package:chat_pc/src/widgets/custom_input.dart';
+import 'package:provider/provider.dart';
 
 
 
@@ -55,6 +58,9 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Container(
       margin: EdgeInsets.only(top: 40.0),
       padding: EdgeInsets.symmetric(horizontal: 50.0),
@@ -79,13 +85,21 @@ class __FormState extends State<_Form> {
             isPassword: true,
           ),
           ButtonLoginWidget(
-            texto: 'Ingrese',
+            texto: 'Registrar',
             color: Colors.blue,
             widthButton: double.infinity,
             heightButton: 55.0,
-            onPressed: (){
-              print(emailController.text);
-              print(passwordController.text);
+            onPressed: authProvider.auth ? null : () async {
+              //print(emailController.text);
+              //print(passwordController.text);
+              FocusScope.of(context).unfocus();
+              final loginOk = await authProvider.register(emailController.text.trim(), passwordController.text.trim(),nameController.text.trim());
+              if(loginOk.ok){
+                //TODO conectar a socket server
+                Navigator.pushReplacementNamed(context, 'users');
+              }else{
+                showAlert(context, 'Error en el Registro', loginOk.msg);
+              }
             },
           ),
         ],

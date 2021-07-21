@@ -1,5 +1,8 @@
+import 'package:chat_pc/src/providers/auth_provider.dart';
+import 'package:chat_pc/src/widgets/show_alert_logout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_pc/src/models/user_model.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 
@@ -14,21 +17,28 @@ class _UsersPageState extends State<UsersPage> {
   RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   final usuarios = [
-    Usuario(online: true, email: 'maria@email.com', nombre: 'Maria', uid: '1'),
-    Usuario(online: false, email: 'jessika@email.com', nombre: 'Jessika', uid: '2'),
-    Usuario(online: true, email: 'salome@email.com', nombre: 'Salomé', uid: '3')
+    User(online: true, email: 'maria@email.com', name: 'Maria', uid: '1'),
+    User(online: false, email: 'jessika@email.com', name: 'Jessika', uid: '2'),
+    User(online: true, email: 'salome@email.com', name: 'Salomé', uid: '3')
   ];
 
   @override
   Widget build(BuildContext context) {
+
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Mi Nombre', style: TextStyle(color: Colors.black54),),
+        title: Text(authProvider.user!.name, style: TextStyle(color: Colors.black54),),
         elevation: 1.0,
         backgroundColor: Colors.white,
         leading: IconButton(
           icon: Icon(Icons.exit_to_app, color: Colors.black54),
-          onPressed: (){},
+          onPressed: (){
+            //TODO desconectar del socker service
+            print('Click Logout');
+            showAlertLogout(context);
+          },
         ),
         actions: [
           Container(
@@ -60,12 +70,12 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  ListTile _usuarioListTitle(Usuario usuario) {
+  ListTile _usuarioListTitle(User usuario) {
     return ListTile(
-      title: Text(usuario.nombre),
+      title: Text(usuario.name),
       subtitle: Text(usuario.email),
       leading: CircleAvatar(
-        child: Text(usuario.nombre.substring(0,2)),
+        child: Text(usuario.name.substring(0,2)),
         backgroundColor: Colors.blue[100],
       ),
       trailing: Container(

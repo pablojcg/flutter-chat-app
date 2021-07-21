@@ -6,7 +6,7 @@ class ButtonLoginWidget extends StatelessWidget {
   final Color color;
   final double widthButton;
   final double heightButton;
-  final void Function() onPressed;
+  final void Function()? onPressed;
 
   const ButtonLoginWidget({
     Key? key, 
@@ -14,7 +14,7 @@ class ButtonLoginWidget extends StatelessWidget {
     required this.color, 
     required this.widthButton, 
     required this.heightButton, 
-    required this.onPressed
+    this.onPressed
   }) : super(key: key);
 
   @override
@@ -22,7 +22,7 @@ class ButtonLoginWidget extends StatelessWidget {
     return ElevatedButton(
       style: ButtonStyle(
         elevation: MaterialStateProperty.all<double>(2.0),
-        backgroundColor: MaterialStateProperty.all<Color>(this.color),
+        //backgroundColor: MaterialStateProperty.all<Color>(this.color),
         shape: MaterialStateProperty.all<OutlinedBorder>(StadiumBorder()),
       ),
       onPressed: this.onPressed, 
