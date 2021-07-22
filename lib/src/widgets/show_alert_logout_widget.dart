@@ -1,7 +1,8 @@
- import 'package:chat_pc/src/providers/auth_provider.dart';
+import 'package:chat_pc/src/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 
- showAlertLogout(BuildContext context){  
+ showAlertLogout(BuildContext context){
+
     showDialog(
       context: context, 
       barrierDismissible: false,

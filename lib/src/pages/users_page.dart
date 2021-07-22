@@ -1,9 +1,15 @@
-import 'package:chat_pc/src/providers/auth_provider.dart';
-import 'package:chat_pc/src/widgets/show_alert_logout_widget.dart';
+import 'package:chat_pc/src/providers/chat_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_pc/src/models/user_model.dart';
+
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import 'package:chat_pc/src/providers/auth_provider.dart';
+import 'package:chat_pc/src/providers/socket_provider.dart';
+import 'package:chat_pc/src/services/users_service.dart';
+import 'package:chat_pc/src/widgets/show_alert_logout_widget.dart';
+import 'package:chat_pc/src/models/user_model.dart';
+
 
 
 class UsersPage extends StatefulWidget {
@@ -15,18 +21,30 @@ class UsersPage extends StatefulWidget {
 class _UsersPageState extends State<UsersPage> {
 
   RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final usersProvider = new UsersService();
 
+  List<User> usuarios = [];
+
+  /*
   final usuarios = [
     User(online: true, email: 'maria@email.com', name: 'Maria', uid: '1'),
     User(online: false, email: 'jessika@email.com', name: 'Jessika', uid: '2'),
     User(online: true, email: 'salome@email.com', name: 'Salomé', uid: '3')
   ];
+  */
+
+  @override
+  void initState() {
+    this._cargarUsuarios();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
 
     final authProvider = Provider.of<AuthProvider>(context);
-
+    final socketProvider = Provider.of<SocketProvider>(context);
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(authProvider.user!.name, style: TextStyle(color: Colors.black54),),
@@ -35,16 +53,18 @@ class _UsersPageState extends State<UsersPage> {
         leading: IconButton(
           icon: Icon(Icons.exit_to_app, color: Colors.black54),
           onPressed: (){
-            //TODO desconectar del socker service
             print('Click Logout');
+            socketProvider.disconnect();
             showAlertLogout(context);
           },
         ),
         actions: [
           Container(
             margin: EdgeInsets.only(right: 10.0),
-            //child: Icon(Icons.check_circle, color: Colors.blue[400],),
-            child: Icon(Icons.offline_bolt, color: Colors.red,),
+            //child: ,
+            child: (socketProvider.serverStatus == ServerStatus.Online) 
+            ? Icon(Icons.check_circle, color: Colors.blue[400],)
+            : Icon(Icons.offline_bolt, color: Colors.red,),
           )
         ],
       ),
@@ -86,12 +106,23 @@ class _UsersPageState extends State<UsersPage> {
           borderRadius: BorderRadius.circular(100.0),
         ),
       ),
+      onTap: (){
+        final chatService = Provider.of<ChatProvider>(context, listen: false);
+        chatService.userTo = usuario;
+        Navigator.pushNamed(context, 'chat');
+        //print(usuario.email);
+      },
     );
   }
 
   _cargarUsuarios() async {
-     // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
+
+    
+
+    this.usuarios = await usersProvider.getUsers();
+    setState(() {});
+    // monitor network fetch
+    //await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
   }

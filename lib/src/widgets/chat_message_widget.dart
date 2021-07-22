@@ -1,4 +1,6 @@
+import 'package:chat_pc/src/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatMessageWidget extends StatelessWidget {
   //const ChatMessageWidget({Key? key}) : super(key: key);
@@ -16,6 +18,9 @@ class ChatMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     return FadeTransition(
       opacity: this.animationController,
       child: SizeTransition(
@@ -24,7 +29,7 @@ class ChatMessageWidget extends StatelessWidget {
           curve: Curves.easeOut
         ),
         child: Container(
-          child: this.uid == '123'
+          child: this.uid == authProvider.user!.uid
           ? _myMessage()
           : _notMyMessage(),
         ),

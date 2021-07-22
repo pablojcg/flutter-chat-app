@@ -1,4 +1,5 @@
 import 'package:chat_pc/src/providers/auth_provider.dart';
+import 'package:chat_pc/src/providers/socket_provider.dart';
 import 'package:chat_pc/src/widgets/show_alert_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_pc/src/widgets/button_login.dart';
@@ -58,7 +59,8 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
 
-    final authProvider = Provider.of<AuthProvider>(context);
+    final authProvider   = Provider.of<AuthProvider>(context);
+    final socketProvider = Provider.of<SocketProvider>(context);
 
     return Container(
       margin: EdgeInsets.only(top: 40.0),
@@ -88,7 +90,7 @@ class __FormState extends State<_Form> {
               FocusScope.of(context).unfocus();
               final loginOk = await authProvider.login(emailController.text.trim(), passwordController.text.trim());
               if(loginOk){
-                //TODO conectar a socket server
+                socketProvider.connect();
                 Navigator.pushReplacementNamed(context, 'users');
               }else{
                 showAlert(context, 'Login Incorrecto', 'Credenciales Incorrectas');

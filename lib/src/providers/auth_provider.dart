@@ -22,11 +22,11 @@ class AuthProvider with ChangeNotifier {
   }
 
   //Getters del token static
-  static Future<String?> getToken() async {
+  static Future<String> getToken() async {
     final _storage = new FlutterSecureStorage();
     // Read value 
     final token  = await _storage.read(key: 'token');
-    return token;
+    return token!;
   }
 
   static Future<void> deleteToken() async {
@@ -44,7 +44,7 @@ class AuthProvider with ChangeNotifier {
       'password': password
     };
 
-    final resp = await http.post(Uri.parse('${Environment.apiUrl}login'),
+    final resp = await http.post(Uri.parse('${Environment.apiUrl}login/login'),
       body: jsonEncode(data),
       headers: {
         'Content-type':'application/json'
@@ -72,7 +72,7 @@ class AuthProvider with ChangeNotifier {
       'password': password
     };
 
-    final resp = await http.post(Uri.parse('${Environment.apiUrl}new'),
+    final resp = await http.post(Uri.parse('${Environment.apiUrl}login/new'),
       body: jsonEncode(data),
       headers: {
         'Content-type':'application/json'
@@ -97,7 +97,7 @@ class AuthProvider with ChangeNotifier {
     if(token == null){
       token = '1';
     }
-    final resp = await http.get(Uri.parse('${Environment.apiUrl}renew'),
+    final resp = await http.get(Uri.parse('${Environment.apiUrl}login/renew'),
       headers: {
         'Content-type':'application/json',
         'x-token':token
