@@ -1,4 +1,7 @@
+import 'package:chat_pc/src/models/router_model.dart';
 import 'package:chat_pc/src/providers/chat_provider.dart';
+import 'package:chat_pc/src/theme/theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -44,12 +47,28 @@ class _UsersPageState extends State<UsersPage> {
 
     final authProvider = Provider.of<AuthProvider>(context);
     final socketProvider = Provider.of<SocketProvider>(context);
+    final appTheme = Provider.of<ThemeChanger>(context);
     
     return Scaffold(
       appBar: AppBar(
-        title: Text(authProvider.user!.name, style: TextStyle(color: Colors.black54),),
+        iconTheme: IconThemeData(
+          color: appTheme.darkTheme 
+          ? Colors.white
+          : Colors.black54, //change your color here
+        ),
+        title: Text(
+          authProvider.user!.name, 
+          style: TextStyle(
+            color:appTheme.darkTheme 
+            ? Colors.white
+            : Colors.black54
+          ),
+        ),
         elevation: 1.0,
-        backgroundColor: Colors.white,
+        backgroundColor: appTheme.darkTheme
+          ? appTheme.currentTheme.primaryColor
+          : Colors.white,
+        /*
         leading: IconButton(
           icon: Icon(Icons.exit_to_app, color: Colors.black54),
           onPressed: (){
@@ -58,16 +77,35 @@ class _UsersPageState extends State<UsersPage> {
             showAlertLogout(context);
           },
         ),
+        */
         actions: [
           Container(
-            margin: EdgeInsets.only(right: 10.0),
+            //color: Colors.red,
+            //margin: EdgeInsets.only(right: 10.0),
             //child: ,
             child: (socketProvider.serverStatus == ServerStatus.Online) 
             ? Icon(Icons.check_circle, color: Colors.blue[400],)
             : Icon(Icons.offline_bolt, color: Colors.red,),
+          ),
+          Container(
+            //color: Colors.red,
+            child: IconButton(
+              icon: Icon(
+                Icons.exit_to_app, 
+                color:appTheme.darkTheme 
+                  ? Colors.white
+                  : Colors.black54
+              ),
+              onPressed: (){
+                print('Click Logout');
+                socketProvider.disconnect();
+                showAlertLogout(context);
+              },
+            ),
           )
         ],
       ),
+      drawer: _MenuDrawer(),
       body: SmartRefresher(
         controller: _refreshController,
         enablePullDown: true,
@@ -127,4 +165,95 @@ class _UsersPageState extends State<UsersPage> {
     _refreshController.refreshCompleted();
   }
 
+}
+
+class _MenuDrawer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+
+    final appTheme = Provider.of<ThemeChanger>(context);
+    final accentColor = appTheme.currentTheme.accentColor;
+    final authProvider = Provider.of<AuthProvider>(context);
+
+    return Drawer(
+      child: Container(
+        child: Column(
+          children: [
+            Container(
+              color: appTheme.darkTheme
+              ? appTheme.currentTheme.primaryColor
+              : Colors.blueGrey[400],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SafeArea(
+                  child: Container(
+                    alignment: Alignment.centerLeft,
+                    //color: Colors.red,
+                    padding: EdgeInsets.symmetric( horizontal: 10.0),
+                    width: double.infinity,
+                    height: 80.0,
+                    child: CircleAvatar(
+                      //minRadius: 20.0,
+                      //backgroundColor: accentColor,
+                      child: Text(authProvider.user!.name.substring(0,2), style: TextStyle(fontSize: 20.0),),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: Text(authProvider.user!.name, style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.white),),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, top: 5.0, bottom: 10.0),
+                  child: Text(authProvider.user!.email, style: TextStyle(color: Colors.white70),),
+                ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Container(
+                //color: Colors.red,
+                child: _ListOption()
+              ),
+            ),
+            Divider(),
+            ListTile(
+              leading: Icon(Icons.lightbulb_outline, color: accentColor,),
+              title: Text('Dark Mode'),
+              trailing: Switch.adaptive(
+                value: appTheme.darkTheme, 
+                activeColor: accentColor,
+                onChanged: (value){
+                  appTheme.darkTheme = value;
+                }
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ListOption extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+
+    final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
+
+    return ListView.builder(
+      physics: BouncingScrollPhysics(), 
+      itemCount: pageRoutes.length,
+      itemBuilder: (context,i) => ListTile(
+        leading: Icon(pageRoutes[i].icon, color: appTheme.accentColor,size: 30.0,),
+        title: Text(pageRoutes[i].title, style: TextStyle(fontSize: 16.0),),
+        onTap: (){
+          Navigator.pushNamed(context, pageRoutes[i].route);
+          //Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => pageRoutes[i].page));
+        },
+      ),
+    );
+  }
 }

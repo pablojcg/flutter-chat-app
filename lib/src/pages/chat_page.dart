@@ -4,6 +4,7 @@ import 'package:chat_pc/src/models/messages_response_model.dart';
 import 'package:chat_pc/src/providers/auth_provider.dart';
 import 'package:chat_pc/src/providers/chat_provider.dart';
 import 'package:chat_pc/src/providers/socket_provider.dart';
+import 'package:chat_pc/src/theme/theme.dart';
 import 'package:chat_pc/src/widgets/chat_message_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -68,13 +69,19 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin{
   Widget build(BuildContext context) {
 
     final userTo = chatProvider.userTo;
+    final appTheme = Provider.of<ThemeChanger>(context);
+    final currentTheme = appTheme.currentTheme;
 
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(
-          color: Colors.black, //change your color here
+          color: appTheme.darkTheme 
+          ? Colors.white
+          : Colors.black, //change your color here
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: appTheme.darkTheme
+        ? currentTheme.primaryColor
+        : Colors.white,
         title: Row(
           children: [
             CircleAvatar(
@@ -83,7 +90,16 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin{
               maxRadius: 20.0,
             ),
             SizedBox(width: 10.0,), 
-            Text(userTo.name, style: TextStyle(color: Colors.black87, fontSize: 15.0, fontWeight: FontWeight.bold),)
+            Text(
+              userTo.name, 
+              style: TextStyle(
+                color: appTheme.darkTheme 
+                ? Colors.white
+                : Colors.black87, 
+                fontSize: 15.0, 
+                fontWeight: FontWeight.bold
+              )
+            )
           ],
         ),
         centerTitle: true,
@@ -102,8 +118,10 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin{
             ), 
             Divider(height: 1.0,), 
             Container(
-              color: Colors.white,
-              child: _inputChat(),
+              color: appTheme.darkTheme
+              ? Colors.blueGrey[700]
+              : Colors.white,
+              child: _inputChat(appTheme),
             )
           ],
         ),
@@ -111,11 +129,11 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin{
     );
   }
 
-  Widget _inputChat(){
+  Widget _inputChat(ThemeChanger appTheme){
 
     return SafeArea(
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
+        margin: EdgeInsets.only(left: 12.0),
         child: Row(
           children: [
             Flexible(
@@ -129,14 +147,21 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin{
                   });
                 },
                 decoration: InputDecoration.collapsed(
-                  hintText: 'Enviar mensaje'
+                  fillColor: Colors.black38,
+                  hintText: 'Mensaje',
+                  hintStyle: TextStyle(
+                    color: appTheme.darkTheme
+                    ? Colors.grey
+                    : Colors.black38
+                  )
                 ),
                 focusNode: _focusNode,
               )
             ),
             //Boton Enviar
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 4.0),
+              //color: Colors.red,
+              //margin: EdgeInsets.symmetric(horizontal: 4.0),
               child: Platform.isIOS 
               ? CupertinoButton(
                 child: Text('Enviar'), 
@@ -147,11 +172,11 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin{
               : Container(
                 margin: EdgeInsets.symmetric(horizontal: 4.0),
                 child: IconTheme(
-                  data: IconThemeData(color: Colors.blue[400]),
+                  data: IconThemeData(color: Colors.blue[300]),
                   child: IconButton(
                     highlightColor: Colors.transparent,
                     splashColor: Colors.transparent,
-                    icon: Icon(Icons.send,),
+                    icon: Icon(Icons.send_rounded,),
                     onPressed: (this._isTyping) 
                     ? () => _handleSubmit(_textController.text.trim())
                     : null ,
