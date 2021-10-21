@@ -98,7 +98,6 @@ class _UsersPageState extends State<UsersPage> {
               ),
               onPressed: (){
                 print('Click Logout');
-                socketProvider.disconnect();
                 showAlertLogout(context);
               },
             ),
@@ -187,34 +186,35 @@ class _MenuDrawer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SafeArea(
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    //color: Colors.red,
-                    padding: EdgeInsets.symmetric( horizontal: 10.0),
-                    width: double.infinity,
-                    height: 80.0,
-                    child: CircleAvatar(
-                      //minRadius: 20.0,
-                      //backgroundColor: accentColor,
-                      child: Text(authProvider.user!.name.substring(0,2), style: TextStyle(fontSize: 20.0),),
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      //color: Colors.red,
+                      padding: EdgeInsets.symmetric( horizontal: 10.0),
+                      width: double.infinity,
+                      height: 80.0,
+                      child: CircleAvatar(
+                        //minRadius: 20.0,
+                        //backgroundColor: accentColor,
+                        child: Text(authProvider.user!.name.substring(0,2), style: TextStyle(fontSize: 20.0),),
+                      ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(authProvider.user!.name, style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.white),),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0, top: 5.0, bottom: 10.0),
-                  child: Text(authProvider.user!.email, style: TextStyle(color: Colors.white70),),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Text(authProvider.user!.name, style: TextStyle(fontSize: 15.0, fontWeight: FontWeight.bold, color: Colors.white),),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0, top: 5.0, bottom:10.0),
+                    child: Text(authProvider.user!.email, style: TextStyle(color: Colors.white70),),
+                  ),
                 ],
               ),
             ),
-            Expanded(
+            Flexible(
               child: Container(
                 //color: Colors.red,
-                child: _ListOption()
+                padding: const EdgeInsets.only(top:0.0),
+                child: _ListOption(),
               ),
             ),
             Divider(),
@@ -244,6 +244,7 @@ class _ListOption extends StatelessWidget {
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
     return ListView.builder(
+      padding: EdgeInsets.only(top: 0.0),
       physics: BouncingScrollPhysics(), 
       itemCount: pageRoutes.length,
       itemBuilder: (context,i) => ListTile(

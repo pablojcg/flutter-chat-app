@@ -24,4 +24,22 @@ class UsersService {
     }
   }
 
+  Future<List<User>> getUsersByEmail(String email) async {
+    try{
+      final resp = await http.get(Uri.parse('${Environment.apiUrl}users/userbyid?email=$email'),
+        headers: {
+          'Content-type':'application/json',
+          'x-token': await AuthProvider.getToken()
+        }
+      );
+
+      final userResponse = usersResponseFromJson(resp.body);
+
+      return userResponse.users!;
+      
+    }catch(e){
+      return [];
+    }
+  }
+
 }

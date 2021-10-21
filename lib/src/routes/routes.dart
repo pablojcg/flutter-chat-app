@@ -1,3 +1,4 @@
+import 'package:chat_pc/src/pages/add_user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_pc/src/pages/chat_page.dart';
 import 'package:chat_pc/src/pages/loading_page.dart';
@@ -10,5 +11,6 @@ final Map<String, Widget Function(BuildContext)> appRoutes = {
   'chat'       : ( _ ) => ChatPage(),
   'loading'    : ( _ ) => LoadingPage(),
   'login'      : ( _ ) => LoginPage(),
-  'register'   : ( _ ) => RegisterPage()
+  'register'   : ( _ ) => RegisterPage(),
+  'contacts'   : ( _ ) => AddUserPage()
 };
